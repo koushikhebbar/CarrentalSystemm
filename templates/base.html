@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Rentigo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-white shadow sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Rentigo Logo" class="h-10 mr-4" onerror="this.src='https://placehold.co/100x40/png?text=Rentigo';">
+                </a>
+                <a href="{{ url_for('home') }}" class="text-2xl font-bold gradient-text">Rentigo</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="{{ url_for('home') }}#home" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'home' %}font-bold text-[#FF6B00]{% endif %}">Home</a>
+                <a href="{{ url_for('home') }}#vehicles" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'view_cars' %}font-bold text-[#FF6B00]{% endif %}">Vehicles</a>
+                <a href="{{ url_for('about') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'about' %}font-bold text-[#FF6B00]{% endif %}">About</a>
+                <a href="{{ url_for('contact') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'contact' %}font-bold text-[#FF6B00]{% endif %}">Contact</a>
+                <a href="{{ url_for('view_cars') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'view_cars' %}font-bold text-[#FF6B00]{% endif %}">Book Now</a>
+                {% if 'username' in session %}
+                    <!-- Notification Bell Icon -->
+                    <div class="relative">
+                        <button id="notification-bell" class="text-gray-600 hover:text-[#FF6B00] focus:outline-none">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span id="unread-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden">0</span>
+                        </button>
+                        <!-- Notification Popup -->
+                        <div id="notification-popup" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
+                            <div class="p-4">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">Notifications</h3>
+                                <div id="notification-list" class="space-y-2">
+                                    <p class="text-gray-500 text-sm text-center">No notifications yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('booking_history') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'booking_history' %}font-bold text-[#FF6B00]{% endif %}">My Bookings</a>
+                    <a href="{{ url_for('logout') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'logout' %}font-bold text-[#FF6B00]{% endif %}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'login' %}font-bold text-[#FF6B00]{% endif %}">Login/Register</a>
+                {% endif %}
+                {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'admin_dashboard' %}font-bold text-[#FF6B00]{% endif %}">Admin</a>
+                {% endif %}
+            </div>
+            <button class="md:hidden text-gray-600 focus:outline-none" onclick="toggleMenu()">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="{{ url_for('home') }}#home" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'home' %}font-bold text-[#FF6B00]{% endif %}">Home</a>
+                <a href="{{ url_for('home') }}#vehicles" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'view_cars' %}font-bold text-[#FF6B00]{% endif %}">Vehicles</a>
+                <a href="{{ url_for('about') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'about' %}font-bold text-[#FF6B00]{% endif %}">About</a>
+                <a href="{{ url_for('contact') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'contact' %}font-bold text-[#FF6B00]{% endif %}">Contact</a>
+                <a href="{{ url_for('view_cars') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'view_cars' %}font-bold text-[#FF6B00]{% endif %}">Book Now</a>
+                {% if 'username' in session %}
+                    <a href="{{ url_for('booking_history') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'booking_history' %}font-bold text-[#FF6B00]{% endif %}">My Bookings</a>
+                    <a href="{{ url_for('logout') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'logout' %}font-bold text-[#FF6B00]{% endif %}">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'login' %}font-bold text-[#FF6B00]{% endif %}">Login/Register</a>
+                {% endif %}
+                {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="text-gray-600 hover:text-[#FF6B00] {% if request.endpoint == 'admin_dashboard' %}font-bold text-[#FF6B00]{% endif %}">Admin</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="min-h-screen">
+        {% block content %}
+        {% endblock %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mx-auto px-4 py-4">
+                    {% for category, message in messages %}
+                        <div class="bg-{% if category == 'success' %}green-100 border-green-400 text-green-700{% elif category == 'danger' %}red-100 border-red-400 text-red-700{% elif category == 'info' %}blue-100 border-blue-400 text-blue-700{% else %}yellow-100 border-yellow-400 text-yellow-700{% endif %} border-l-4 p-4 mb-4 rounded">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <a href="{{ url_for('home') }}">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Rentigo Logo" class="h-8" onerror="this.src='https://placehold.co/100x40/png?text=Rentigo';">
+                    </a>
+                    <p class="mt-2 text-gray-400">© 2025 Rentigo. All rights reserved.</p>
+                </div>
+                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
+                    <a href="{{ url_for('home') }}#home" class="text-gray-400 hover:text-white">Home</a>
+                    <a href="{{ url_for('home') }}#vehicles" class="text-gray-400 hover:text-white">Vehicles</a>
+                    <a href="{{ url_for('terms') }}" class="text-gray-400 hover:text-white">Terms & Conditions</a>
+                    <a href="{{ url_for('about') }}" class="text-gray-400 hover:text-white">About</a>
+                    <a href="{{ url_for('contact') }}" class="text-gray-400 hover:text-white">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+flask==2.3.3
+pymongo==4.6.3
+flask-mail==0.9.1
+itsdangerous==2.1.2
+werkzeug==3.0.1
+sendgrid==6.11.0
+python-dotenv==1.0.1
+razorpay

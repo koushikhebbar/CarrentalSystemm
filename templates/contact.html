@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold gradient-text mb-4">Get in Touch</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">We’re here to assist you with your rental needs.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Contact Form -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <form>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-[#0057A3] mb-2">Name</label>
+                            <input type="text" id="name" name="name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#FF6B00] text-lg glow-focus" placeholder="Your Name" required>
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-[#0057A3] mb-2">Email</label>
+                            <input type="email" id="email" name="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#FF6B00] text-lg glow-focus" placeholder="Your Email" required>
+                        </div>
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-[#0057A3] mb-2">Message</label>
+                            <textarea id="message" name="message" rows="5" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#FF6B00] text-lg glow-focus" placeholder="Your Message" required></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <button type="submit" class="bg-[#FF6B00] text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#e05f00] transition-all pulse-btn">
+                            <i class="fas fa-paper-plane mr-2"></i> Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- Contact Info -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-bold text-[#0057A3] mb-4">Contact Information</h3>
+                <p class="text-gray-600 mb-2"><strong>Email:</strong> support@rentigo.com</p>
+                <p class="text-gray-600 mb-2"><strong>Phone:</strong> +91 12345 67890</p>
+                <p class="text-gray-600 mb-4"><strong>Address:</strong> Rentigo, Udupi Main, Udupi, Karnataka, India</p>
+                <p class="text-gray-600 mb-4">Our showrooms are located in Udupi Main, Manipal, Kundapur, and Karkala.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

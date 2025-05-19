@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Payment for {{ car.car_name }}{% endblock %}
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold gradient-text mb-4">Complete Your Payment</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Finalize your booking for <span class="text-[#0057A3]">{{ car.car_name }}</span>.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Booking Summary -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-bold text-[#0057A3] mb-4">Booking Summary</h3>
+                <img src="{{ url_for('get_image', car_id=car._id) if car.image_data else 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80' }}" alt="{{ car.car_name }}" class="w-full h-48 object-cover rounded-lg mb-4">
+                <p class="text-gray-600 mb-2"><strong>Vehicle:</strong> {{ car.car_name }}</p>
+                <p class="text-gray-600 mb-2"><strong>Type:</strong> {{ car.car_type | capitalize }}</p>
+                <p class="text-gray-600 mb-2"><strong>Location:</strong> {{ booking_data.location }}</p>
+                <p class="text-gray-600 mb-2"><strong>Address:</strong> {{ booking_data.location_address }}</p>
+                <p class="text-gray-600 mb-2"><strong>Showroom:</strong> {{ booking_data.showroom }}</p>
+                <p class="text-gray-600 mb-2"><strong>Start Date:</strong> {{ booking_data.start_date }}</p>
+                <p class="text-gray-600 mb-2"><strong>End Date:</strong> {{ booking_data.end_date }}</p>
+                <p class="text-gray-600 mb-2"><strong>Mobile:</strong> {{ booking_data.mobile }}</p>
+                <p class="text-gray-600 mb-4"><strong>Total Price:</strong> ₹{{ booking_data.total_price | int }}</p>
+            </div>
+            <!-- Payment Form -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-bold text-[#0057A3] mb-4">Payment Details</h3>
+                <div class="mt-6 text-center">
+                    <form id="payment-form">
+                        <input type="hidden" id="razorpay_order_id" value="{{ order_id }}">
+                        <button type="button" id="rzp-button" class="bg-[#FF6B00] text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#e05f00] transition-all pulse-btn">
+                            <i class="fas fa-lock mr-2"></i> Pay ₹{{ booking_data.total_price | int }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Razorpay Checkout Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.getElementById('rzp-button').onclick = function(e) {
+        var options = {
+            "key": "{{ razorpay_key_id }}",
+            "amount": {{ booking_data.total_price | int * 100 }},
+            "currency": "INR",
+            "name": "Rentigo",
+            "description": "Booking for {{ car.car_name }}",
+            "image": "https://rentigo.com/logo.png", // Replace with your actual logo URL
+            "order_id": "{{ order_id }}",
+            "handler": function (response) {
+                fetch('/verify_payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                        car_id: "{{ car._id }}"
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        window.location.href = "{{ url_for('booking_history') }}";
+                    } else {
+                        alert('Payment verification failed: ' + (data.message || 'Please try again.'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during payment verification. Please try again.');
+                });
+            },
+            "prefill": {
+                "name": "{{ session.username | e }}",
+                "email": "{{ user.email | e }}",
+                "contact": "{{ booking_data.mobile | e }}"
+            },
+            "theme": {
+                "color": "#FF6B00"
+            }
+        };
+        var rzp = new Razorpay(options);
+        rzp.on('payment.failed', function (response) {
+            alert('Payment failed: ' + (response.error.description || 'Please try again.'));
+        });
+        rzp.open();
+        e.preventDefault();
+    };
+</script>
+{% endblock %}

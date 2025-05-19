@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<section id="home" class="relative bg-gray-900 h-[600px] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0">
+        <div class="slideshow">
+            <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover opacity-60 transition-opacity duration-1000" alt="Car">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover opacity-0 transition-opacity duration-1000 absolute top-0" alt="Bike">
+            <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" class="w-full h-full object-cover opacity-0 transition-opacity duration-1000 absolute top-0" alt="Scooty">
+        </div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 animate-fade-in">Rent Your Perfect Ride with Rentigo</h1>
+        <p class="text-xl md:text-2xl text-gray-200 opacity-90 mb-10 animate-fade-in">Explore cars, bikes, and scooties for rent in Udupi.</p>
+        <div class="max-w-3xl mx-auto bg-white rounded-xl p-6 shadow-lg">
+            <form id="searchForm" method="POST" action="{{ url_for('search') }}">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-[#0057A3] mb-2">Pickup Location</label>
+                        <div class="relative">
+                            <select id="location" name="location" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#FF6B00] text-lg appearance-none glow-focus" required>
+                                <option value="" disabled selected>Select Location</option>
+                                <option value="Udupi">Udupi</option>
+                                <option value="Manipal">Manipal</option>
+                                <option value="Mangalore">Mangalore</option>
+                                <option value="Kundapur">Kundapur</option>
+                                <option value="Karkala">Karkala</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-3 top-3.5 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="start_date" class="block text-sm font-medium text-[#0057A3] mb-2">Start Date</label>
+                        <div class="relative">
+                            <input type="date" id="start_date" name="start_date" min="{{ today }}" max="{{ max_date }}" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#FF6B00] text-lg glow-focus" required>
+                            <i class="fas fa-calendar-alt absolute right-3 top-3.5 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="end_date" class="block text-sm font-medium text-[#0057A3] mb-2">End Date</label>
+                        <div class="relative">
+                            <input type="date" id="end_date" name="end_date" min="{{ today }}" max="{{ max_date }}" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#FF6B00] text-lg glow-focus" required>
+                            <i class="fas fa-calendar-alt absolute right-3 top-3.5 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="vehicle_type" class="block text-sm font-medium text-[#0057A3] mb-2">Vehicle Type</label>
+                        <div class="relative">
+                            <select id="vehicle_type" name="vehicle_type" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#FF6B00] text-lg appearance-none glow-focus" required>
+                                <option value="" disabled selected>Select Type</option>
+                                <option value="car">Car</option>
+                                <option value="bike">Bike</option>
+                                <option value="scooty">Scooty</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-3 top-3.5 text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 text-center">
+                    <button type="submit" class="bg-[#FF6B00] text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#e05f00] transition-all pulse-btn">
+                        <i class="fas fa-search mr-2"></i> Search Vehicles
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Vehicle Categories -->
+<section id="categories" class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-[#0057A3] mb-4">Browse by Category</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Find the perfect vehicle for your journey.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-lg p-6 shadow-md text-center hover:shadow-lg transition-shadow">
+                <i class="fas fa-car text-3xl text-[#FF6B00] mb-4"></i>
+                <h3 class="text-xl font-semibold text-[#0057A3]">Cars</h3>
+                <p class="text-gray-600">Comfortable and spacious for family trips.</p>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md text-center hover:shadow-lg transition-shadow">
+                <i class="fas fa-motorcycle text-3xl text-[#FF6B00] mb-4"></i>
+                <h3 class="text-xl font-semibold text-[#0057A3]">Bikes</h3>
+                <p class="text-gray-600">Agile and thrilling for city rides.</p>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md text-center hover:shadow-lg transition-shadow">
+                <i class="fas fa-bicycle text-3xl text-[#FF6B00] mb-4"></i>
+                <h3 class="text-xl font-semibold text-[#0057A3]">Scooties</h3>
+                <p class="text-gray-600">Easy to ride for daily commutes.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Vehicles -->
+<section id="vehicles" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-[#0057A3] mb-4">Featured Vehicles</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Explore our top rental vehicles.</p>
+        </div>
+        {% if vehicles %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {% for vehicle in vehicles %}
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                        {% if vehicle.image_data %}
+                            <img src="{{ url_for('get_image', car_id=vehicle._id) }}" alt="{{ vehicle.car_name }}" class="w-full h-48 object-cover">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="{{ vehicle.car_name }}" class="w-full h-48 object-cover">
+                        {% endif %}
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-[#0057A3] mb-2">{{ vehicle.car_name }}</h3>
+                            <p class="text-gray-600 mb-2">Location: {{ vehicle.location }}</p>
+                            <p class="text-gray-600 mb-2">Type: {{ vehicle.car_type | capitalize }}</p>
+                            <p class="text-gray-600 mb-4">₹{{ vehicle.price_per_day | int }} / day</p>
+                            <a href="{{ url_for('book_car', car_id=vehicle._id) }}" class="bg-[#FF6B00] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#e05f00] transition-all pulse-btn">Book Now</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600">No vehicles available at the moment.</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Explore by Location -->
+<section id="locations" class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-[#0057A3] mb-4">Explore by Location</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Find vehicles in top areas of Udupi.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <a  class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Udupi" class="w-full h-40 object-cover">
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold text-[#0057A3]">Udupi</h3>
+                </div>
+            </a>
+            <a  class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Manipal" class="w-full h-40 object-cover">
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold text-[#0057A3]">Manipal</h3>
+                </div>
+            </a>
+            <a  class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mangalore" class="w-full h-40 object-cover">
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold text-[#0057A3]">Mangalore</h3>
+                </div>
+            </a>
+            <a  class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Kundapur" class="w-full h-40 object-cover">
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold text-[#0057A3]">Kundapur</h3>
+                </div>
+            </a>
+            <a class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Karkala" class="w-full h-40 object-cover">
+                <div class="p-4 text-center">
+                    <h3 class="text-lg font-semibold text-[#0057A3]">Karkala</h3>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Why Rent with Rentigo -->
+<section id="why-rentigo" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-[#0057A3] mb-4">Why Rent with Rentigo?</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Trusted by thousands for hassle-free vehicle rentals.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="text-center">
+                <i class="fas fa-check-circle text-3xl text-[#FF6B00] mb-4"></i>
+                <h3 class="text-xl font-semibold text-[#0057A3] mb-2">Verified Vehicles</h3>
+                <p class="text-gray-600">All vehicles are thoroughly inspected.</p>
+            </div>
+            <div class="text-center">
+                <i class="fas fa-wallet text-3xl text-[#FF6B00] mb-4"></i>
+                <h3 class="text-xl font-semibold text-[#0057A3] mb-2">Affordable Rates</h3>
+                <p class="text-gray-600">Competitive pricing for all budgets.</p>
+            </div>
+            <div class="text-center">
+                <i class="fas fa-laptop text-3xl text-[#FF6B00] mb-4"></i>
+                <h3 class="text-xl font-semibold text-[#0057A3] mb-2">Easy Booking</h3>
+                <p class="text-gray-600">Seamless online booking process.</p>
+            </div>
+            <div class="text-center">
+                <i class="fas fa-headset text-3xl text-[#FF6B00] mb-4"></i>
+                <h3 class="text-xl font-semibold text-[#0057A3] mb-2">24/7 Support</h3>
+                <p class="text-gray-600">We’re here to help anytime.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials" class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-[#0057A3] mb-4">What Our Customers Say</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Hear from our happy renters.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white rounded-lg p-6 shadow-md">
+                <p class="text-gray-600 mb-4">"Renting a bike was so easy with Rentigo!"</p>
+                <div class="flex items-center">
+                    <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
+                    <div>
+                        <h4 class="text-[#0057A3] font-semibold">Arjun P.</h4>
+                        <p class="text-gray-500">Renter</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md">
+                <p class="text-gray-600 mb-4">"The car was in great condition and affordable!"</p>
+                <div class="flex items-center">
+                    <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
+                    <div>
+                        <h4 class="text-[#0057A3] font-semibold">Sneha R.</h4>
+                        <p class="text-gray-500">Renter</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg p-6 shadow-md">
+                <p class="text-gray-600 mb-4">"Amazing support during my scooty rental."</p>
+                <div class="flex items-center">
+                    <img src="https://randomuser.me/api/portraits/men/3.jpg" alt="User" class="w-12 h-12 rounded-full mr-4">
+                    <div>
+                        <h4 class="text-[#0057A3] font-semibold">Vikram S.</h4>
+                        <p class="text-gray-500">Renter</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Download Our App -->
+<section id="app-download" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center">
+        <div class="md:w-1/2 mb-8 md:mb-0">
+            <h2 class="text-4xl font-bold text-[#0057A3] mb-4">Download the Rentigo App</h2>
+            <p class="text-lg text-gray-600 mb-6">Book vehicles on the go with our easy-to-use app.</p>
+            <div class="flex space-x-4">
+                <a href="#" class="inline-block"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" class="h-10"></a>
+                <a href="#" class="inline-block"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Google Play" class="h-14"></a>
+            </div>
+        </div>
+        <div class="md:w-1/2">
+            <img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="App UI" class="w-full rounded-lg shadow-lg">
+        </div>
+    </div>
+</section>
+
+<!-- User Bookings Summary -->
+{% if session.username and session.role != 'admin' %}
+    <section id="bookings" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-[#0057A3] mb-4">Your Bookings</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">View and manage your vehicle rentals.</p>
+            </div>
+            <div class="text-center">
+                <a href="{{ url_for('booking_history') }}" class="bg-[#FF6B00] text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#e05f00] transition-all pulse-btn">View Booking History</a>
+            </div>
+        </div>
+    </section>
+{% endif %}
+
+<script>
+    // Slideshow logic for hero section
+    const slides = document.querySelectorAll('.slideshow img');
+    let currentSlide = 0;
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('opacity-60', i === index);
+            slide.classList.toggle('opacity-0', i !== index);
+        });
+    }
+
+    setInterval(() => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }, 5000);
+
+    // Ensure end_date is after start_date
+    document.getElementById('start_date').addEventListener('change', function() {
+        const startDate = new Date(this.value);
+        const endDateInput = document.getElementById('end_date');
+        const minEndDate = new Date(startDate);
+        minEndDate.setDate(startDate.getDate() + 1);
+        endDateInput.min = minEndDate.toISOString().split('T')[0];
+    });
+</script>
+{% endblock %}

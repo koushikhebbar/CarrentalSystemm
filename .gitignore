@@ -1,0 +1,65 @@
+# Python dependencies
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+*.egg-info/
+dist/
+build/
+
+# Environment variables
+.env
+
+# Node.js (if JavaScript dependencies are used)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Build output (if any frontend bundling is used)
+dist/
+build/
+out/
+*.bundle.js
+*.bundle.js.map
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Firebase (if applicable)
+firebase-debug.log
+firebase.json.bak
+*.firebaserc
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Local development uploads (if applicable)
+/static/uploads/
+
+# Documentation (if applicable)
+docs/build/
+docs/_site/
+
+# Miscellaneous
+*.bak
+*.gho
+*.ori
+*.orig

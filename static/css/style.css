@@ -1,0 +1,211 @@
+:root {
+    --primary: #0057A3;
+    --secondary: #FF6B00;
+    --gradient-start: #FF6B00;
+    --gradient-end: #0057A3;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f7fa;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+}
+
+.gradient-text {
+    background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.glow-text {
+    text-shadow: 0 0 10px rgba(255, 107, 0, 0.5), 0 0 20px rgba(0, 87, 163, 0.3);
+}
+
+.pulse-btn {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 107, 0, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 107, 0, 0); }
+}
+
+.typing-text {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 3s steps(40, end) forwards;
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+.slide-in-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    animation: slideInLeft 0.8s ease forwards;
+}
+
+@keyframes slideInLeft {
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-in-right {
+    opacity: 0;
+    transform: translateX(50px);
+    animation: slideInRight 0.8s ease forwards;
+}
+
+@keyframes slideInRight {
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.tilt-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tilt-card:hover {
+    transform: rotateX(5deg) rotateY(5deg) translateY(-5px);
+    box-shadow: 0 15px30px rgba(0, 0, 0, 0.2);
+}
+
+.grayscale-to-color {
+    filter: grayscale(100%);
+    transition: filter 0.5s ease;
+}
+
+.grayscale-to-color:hover {
+    filter: grayscale(0%);
+}
+
+.zoom-in {
+    transition: transform 0.3s ease;
+}
+
+.zoom-in:hover {
+    transform: scale(1.1);
+}
+
+.glow-focus {
+    transition: box-shadow 0.3s ease;
+}
+
+.glow-focus:focus {
+    box-shadow: 0 0 15px rgba(0, 87, 163, 0.5);
+    outline: none;
+}
+
+.vehicle-option {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.vehicle-option:hover {
+    transform: translateY(-10px) rotate(2deg);
+    background-color: rgba(255, 107, 0, 0.1);
+}
+
+.social-icon {
+    transition: transform 0.3s ease;
+}
+
+.social-icon:hover {
+    transform: translateY(-5px);
+}
+
+.hero-section {
+    background: linear-gradient(135deg, rgba(255, 107, 0, 0.8), rgba(0, 87, 163, 0.6)), 
+                url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2070&q=80');
+    background-size: cover;
+    background-position: center;
+}
+
+section {
+    padding: 5rem 1rem;
+}
+
+footer {
+    margin-top: auto;
+}
+
+/* Flash Messages */
+.flash-message {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+.flash-success { background-color: #d4edda; color: #155724; }
+.flash-danger { background-color: #f8d7da; color: #721c24; }
+.flash-warning { background-color: #fff3cd; color: #856404; }
+.flash-info { background-color: #d1ecf1; color: #0c5460; }
+
+
+/* Gradient Text */
+.gradient-text {
+    background: linear-gradient(to right, #0057A3, #FF6B00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Glow Focus */
+.glow-focus:focus {
+    box-shadow: 0 0 8px rgba(255, 107, 0, 0.5);
+}
+
+/* Pulse Button Animation */
+.pulse-btn:hover {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Fade-in Animation */
+.animate-fade-in {
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom Select Arrow */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Ensure images are responsive */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+    scroll-behavior: smooth;
+}

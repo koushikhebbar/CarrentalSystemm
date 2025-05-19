@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Booking History{% endblock %}
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold gradient-text mb-4">Your Booking History</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">View all your past and active bookings.</p>
+        </div>
+        {% if bookings %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white rounded-xl shadow-md">
+                    <thead>
+                        <tr>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-[#0057A3]">Vehicle</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-[#0057A3]">Start Date</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-[#0057A3]">End Date</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-[#0057A3]">Total Price</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-[#0057A3]">Status</th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-[#0057A3]">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                            <tr>
+                                <td class="px-6 py-4">{{ booking.vehicle.car_name if booking.vehicle else 'Unknown' }}</td>
+                                <td class="px-6 py-4">{{ booking.start_date.strftime('%Y-%m-%d') }}</td>
+                                <td class="px-6 py-4">{{ booking.end_date.strftime('%Y-%m-%d') }}</td>
+                                <td class="px-6 py-4">₹{{ booking.total_price }}</td>
+                                <td class="px-6 py-4">
+                                    {% if booking.status == 'confirmed' %}
+                                        <span class="text-green-600">Confirmed</span>
+                                    {% else %}
+                                        <span class="text-red-600">Cancelled</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if booking.status == 'confirmed' %}
+                                        <a href="{{ url_for('cancel_booking', booking_id=booking._id) }}" class="text-[#FF6B00] hover:underline">Cancel</a>
+                                    {% else %}
+                                        <span class="text-gray-400">No actions</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600">No bookings found.</p>
+            <div class="text-center mt-8">
+                <a href="{{ url_for('view_cars') }}" class="bg-[#FF6B00] text-white px-8 py-3 rounded-lg text-lg font-semibold pulse-btn shadow-lg hover:bg-[#e05f00] transition-all">Book a Vehicle</a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

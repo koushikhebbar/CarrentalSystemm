@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Cancel Booking{% endblock %}
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-xl p-8 shadow-lg">
+            <h2 class="text-3xl font-bold gradient-text mb-6 text-center">Cancel Booking</h2>
+            <p class="text-gray-600 mb-6 text-center">
+                Are you sure you want to cancel your booking for <strong>{{ vehicle.car_name }}</strong>?
+            </p>
+            <form method="POST" action="{{ url_for('cancel_booking', booking_id=booking._id) }}">
+                <div class="text-center mb-6">
+                    <p class="text-gray-600">Booking Details:</p>
+                    <p class="text-gray-800">Vehicle: {{ vehicle.car_name }}</p>
+                    <p class="text-gray-800">Start Date: {{ booking.start_date.strftime('%Y-%m-%d') }}</p>
+                    <p class="text-gray-800">End Date: {{ booking.end_date.strftime('%Y-%m-%d') }}</p>
+                    <p class="text-gray-800">Location: {{ booking.location }}</p>
+                </div>
+                <div class="flex justify-center space-x-4">
+                    <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-red-700 transition-all">Yes, Cancel</button>
+                    <a href="{{ url_for('booking_history') }}" class="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-gray-400 transition-all">No, Go Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

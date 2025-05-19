@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold gradient-text mb-6 text-center">Your Notifications</h2>
+        {% if notifications %}
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                {% for notification in notifications %}
+                    <div class="flex items-start border-b border-gray-200 py-4 {% if not notification.read %}bg-blue-50{% endif %}">
+                        <div class="flex-shrink-0">
+                            <i class="fas {% if notification.action == 'login' %}fa-sign-in-alt{% elif notification.action == 'logout' %}fa-sign-out-alt{% elif notification.action == 'register' %}fa-user-plus{% elif notification.action == 'booking' %}fa-car{% elif notification.action == 'booking_cancelled' %}fa-times-circle{% elif notification.action == 'password_reset_request' %}fa-key{% elif notification.action == 'password_reset_success' %}fa-check-circle{% endif %} text-2xl text-[#FF6B00] mr-4"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-800">{{ notification.message }}</p>
+                            <p class="text-sm text-gray-500">{{ notification.timestamp.strftime('%d-%m-%Y %H:%M:%S') }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                <p class="text-gray-600">No notifications yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

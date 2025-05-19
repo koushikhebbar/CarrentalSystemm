@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Logout{% endblock %}
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold gradient-text mb-6">Logout</h2>
+        <p class="text-lg text-gray-600 mb-8">Are you sure you want to logout?</p>
+        <form method="POST" action="{{ url_for('logout') }}">
+            <div class="space-x-4">
+                <button type="submit" class="bg-[#0057A3] text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-[#004a8a] transition-all">Yes, Logout</button>
+                <a href="{{ url_for('home') }}" class="bg-gray-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-700 transition-all">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

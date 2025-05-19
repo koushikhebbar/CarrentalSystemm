@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}About Us{% endblock %}
+{% block content %}
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold gradient-text mb-4">About Rentigo</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Your trusted vehicle rental service in Udupi.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="About Rentigo" class="w-full h-64 object-cover rounded-lg shadow-md">
+            </div>
+            <div>
+                <p class="text-gray-600 mb-4">Rentigo is dedicated to providing hassle-free vehicle rentals in Udupi. With a wide range of cars, bikes, and scooties, we cater to all your travel needs.</p>
+                <p class="text-gray-600 mb-4">Our mission is to offer affordable, reliable, and convenient rental options with top-notch customer service.</p>
+                <ul class="list-disc list-inside text-gray-600">
+                    <li>Multiple showrooms across Udupi: Udupi Main, Manipal, Kundapur, Karkala.</li>
+                    <li>24/7 customer support.</li>
+                    <li>Verified and well-maintained vehicles.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
