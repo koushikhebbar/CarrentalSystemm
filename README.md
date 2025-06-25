@@ -1,36 +1,60 @@
-# Rentigoooo - Car Rental System (User Side)
+<h1 align="center">🚗 Rentigoooo - Car Rental System (User Side)</h1>
 
-## Overview
-Rentigoooo is a user-side web application for a car rental system built with Flask, Firebase, MongoDB, and Razorpay. It allows users to browse vehicles (cars, bikes, and scooters), book rentals, make payments, and manage their booking history. The application features secure user authentication, real-time vehicle search, and payment integration.
+<p align="center">
+  🔐 <strong>User Authentication</strong> • 🔍 <strong>Vehicle Search</strong> • 💳 <strong>Bookings & Payments</strong><br>
+  <em>A responsive, full-stack car rental solution built using Flask and Firebase.</em>
+</p>
 
-**Note**: This repository contains only the **user-side** code. The admin-side code is not included. For access to admin-side files or collaboration inquiries, please contact me at [your-email@example.com](mailto:your-email@example.com).
+<p align="center">
+  <img src="https://img.shields.io/github/license/your-username/rentigoooo?style=flat-square" />
+  <img src="https://img.shields.io/badge/Flask-Python-blue?style=flat-square&logo=flask" />
+  <img src="https://img.shields.io/badge/Firebase-Auth-orange?style=flat-square&logo=firebase" />
+  <img src="https://img.shields.io/badge/MongoDB-Data-green?style=flat-square&logo=mongodb" />
+</p>
 
-## Features
-- **User Authentication**: Secure registration and login using Firebase Authentication with email and password.
-- **Vehicle Search**: Search for available vehicles by location, vehicle type (car, bike, scooty), and rental dates.
-- **Booking System**: Book vehicles with date validation to prevent conflicts.
-- **Payment Integration**: Process payments securely using Razorpay.
-- **Booking History**: View and cancel bookings with notification support.
-- **Notifications**: Receive real-time notifications for actions like login, registration, booking confirmations, and cancellations.
-- **Responsive Design**: User-friendly interface with templates for home, vehicle details, booking, payment, and more.
+---
 
-## Tech Stack
-- **Backend**: Flask (Flask framework)
-- **Authentication**: Firebase Authentication
-- **Database**: MongoDB for storing user data, bookings, and vehicle details
-- **Payment Gateway**: Razorpay
-- **Environment Management**: Python `dotenv` for managing sensitive credentials
-- **Other Libraries**: `pymongo`, `firebase-admin`, `pytz`, `razorpay`
+## 🔍 Overview
 
-## Prerequisites
-- Python 3.8+
-- MongoDB instance (local or MongoDB Atlas)
-- Firebase project with Authentication enabled
-- Razorpay account for payment integration
-- Git and a GitHub account
+Rentigoooo is a **Flask-based car/bike/scooter rental system** that enables users to:
 
-## Installation
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/your-username/rentigoooo.git
-   cd rentigoooo
+- Register/Login via **Firebase Authentication**
+- Search & book vehicles
+- Make payments using **Razorpay**
+- View or cancel bookings with notifications
+- Enjoy a clean and responsive UI
+
+> 🔑 This repo includes only the **User Side** code. For **Admin Side**, contact me via [designerkoushik256@gmail.com](mailto:designerkoushik256@gmail.com).
+
+---
+
+## ⚙️ Tech Stack
+
+| Backend 🚀 | Frontend 💻 | Integrations 🌐 |
+|------------|-------------|-----------------|
+| Flask      | HTML/CSS    | Firebase Auth   |
+| Python     | JavaScript  | Razorpay API    |
+| MongoDB    | Bootstrap   | Pymongo         |
+
+Python Libraries:  
+`flask`, `python-dotenv`, `firebase-admin`, `pymongo`, `razorpay`, `pytz`
+
+---
+
+## 🚀 Features
+
+- 🔐 **User Authentication** – Firebase login/register
+- 🔍 **Search Vehicles** – By location, type & dates
+- 📅 **Bookings** – View/cancel active bookings
+- 💳 **Payments** – Razorpay secure gateway
+- 📲 **Notifications** – On bookings & cancellations
+- 📱 **Responsive Design** – Works on all devices
+
+---
+
+## 🛠️ Setup & Installation
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/rentigoooo.git
+cd rentigoooo
