@@ -9,3 +9,4 @@ __pycache__/
 venv/
 *.log
 echo "rentigoooo-firebase-adminsdk-fbsvc-*.json" >> .gitignore
+git rm --cached rentigoooo-firebase-adminsdk-fbsvc-6b853eda62.json
