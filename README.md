@@ -36,7 +36,7 @@ Rentigoooo is a **Flask-based car/bike/scooter rental system** that enables user
 | Python     | JavaScript  | Razorpay API    |
 | MongoDB    | Bootstrap   | Pymongo         |
 
-Python Libraries:  
+**Python Libraries:**  
 `flask`, `python-dotenv`, `firebase-admin`, `pymongo`, `razorpay`, `pytz`
 
 ---
@@ -51,14 +51,6 @@ Python Libraries:
 - 📱 **Responsive Design** – Works on all devices
 
 ---
-
-## 🛠️ Setup & Installation
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/your-username/rentigoooo.git
-cd rentigoooo
-
 ## 🔒 Security Notice
 
 - Ensure your `.env` file is **not committed**.
@@ -92,4 +84,3 @@ This project is licensed under the **MIT License**.
 <p align="center">
   <em>“Build for real people, solve real problems.”</em>
 </p>
-
