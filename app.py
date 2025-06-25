@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from pymongo import MongoClient
-from bson import Binary, ObjectId
+from bson import ObjectId
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import logging
@@ -15,32 +15,55 @@ from pytz import timezone
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'your_secure_secret_key')
+app.secret_key = os.getenv('SECRET_KEY')
 app.permanent_session_lifetime = timedelta(minutes=30)
+
+# Validate SECRET_KEY
+if not app.secret_key:
+    raise ValueError("SECRET_KEY is not set in the .env file")
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Razorpay configuration
-RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_Oz82layOlk7wVy')
-RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', 'aloRrEV8jEHS1f6RGGJ4VmKr')
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
+
+# Validate Razorpay keys
+if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
+    raise ValueError("RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is not set in the .env file")
+
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 # Initialize Firebase Admin SDK
-firebase_cred = credentials.Certificate('rentigoooo-firebase-adminsdk-fbsvc-6b853eda62.json')
+FIREBASE_CREDENTIALS_PATH = os.getenv('FIREBASE_CREDENTIALS_PATH')
+if not FIREBASE_CREDENTIALS_PATH or not os.path.exists(FIREBASE_CREDENTIALS_PATH):
+    raise ValueError(f"FIREBASE_CREDENTIALS_PATH is not set or file does not exist: {FIREBASE_CREDENTIALS_PATH}")
+
+firebase_cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_admin.initialize_app(firebase_cred)
 logger.info("Firebase Admin SDK initialized successfully")
 
 # Connect to MongoDB
-MONGO_URI = os.environ.get('MONGO_URI', "mongodb+srv://rentigoUser:rentigo115@rentigocluster.pl9ppid.mongodb.net/?retryWrites=true&w=majority&appName=RentigoCluster")
+MONGO_URI = os.getenv('MONGO_URI')
+DB_NAME = os.getenv('DB_NAME')
+CARS_COLLECTION = os.getenv('CARS_COLLECTION')
+BOOKINGS_COLLECTION = os.getenv('BOOKINGS_COLLECTION')
+NOTIFICATIONS_COLLECTION = os.getenv('NOTIFICATIONS_COLLECTION')
+USERS_COLLECTION = os.getenv('USERS_COLLECTION')
+
+# Validate MongoDB configuration
+if not all([MONGO_URI, DB_NAME, CARS_COLLECTION, BOOKINGS_COLLECTION, NOTIFICATIONS_COLLECTION, USERS_COLLECTION]):
+    raise ValueError("One or more MongoDB environment variables are not set in the .env file")
+
 try:
     client = MongoClient(MONGO_URI)
-    db = client['rentigo']
-    cars_collection = db['cars']
-    bookings_collection = db['Bookings']
-    notifications_collection = db['notifications']
-    users_collection = db['users']  # Added for storing user data
+    db = client[DB_NAME]
+    cars_collection = db[CARS_COLLECTION]
+    bookings_collection = db[BOOKINGS_COLLECTION]
+    notifications_collection = db[NOTIFICATIONS_COLLECTION]
+    users_collection = db[USERS_COLLECTION]
     logger.info("Connected to MongoDB successfully")
 except Exception as e:
     logger.error(f"Failed to connect to MongoDB: {str(e)}")
@@ -446,11 +469,11 @@ def view_cars():
     search_params = session.get('search_params', {})
     query = {'available': True}
     
-    cars = list(cars_collection.find(query).sort('created_at', -1))
-    today = datetime.utcnow().date().isoformat()
-    max_date = (datetime.utcnow().date() + timedelta(days=30)).isoformat()
+    cars = list(cars_collection.find(query, {}))
+    today = datetime.today().date().isoformat()
+    max_date = (datetime.today().date() + timedelta(days=30)).isoformat()
     logger.debug(f"Retrieved {len(cars)} available vehicles")
-    return render_template('view-cars.html', cars=cars, search_params=search_params, today=today, max_date=max_date)
+    return render_template('view-cars.html', vehicles=cars, today=today, max_date=max_date, search_params=search_params)
 
 # Car details
 @app.route('/car_details/<car_id>')
@@ -460,11 +483,11 @@ def car_details(car_id):
         if not car:
             flash('Vehicle not found', 'danger')
             return render_template('view-cars.html')
-        logger.debug(f"Retrieved details for vehicle: {car_id}")
+        logger.debug(f"Retrieved details for car: {car_id}")
         return render_template('car-details.html', car=car)
     except Exception as e:
         logger.error(f"Error fetching car details: {str(e)}")
-        flash('An error occurred while fetching vehicle details', 'danger')
+        flash('An error occurred while fetching car details', 'danger')
         return render_template('view-cars.html')
 
 # Book vehicle
@@ -489,7 +512,7 @@ def book_car(car_id):
 
     # Validate search parameters before proceeding
     if not all([search_params.get('location'), search_params.get('start_date'), search_params.get('end_date'), search_params.get('vehicle_type')]):
-        flash('Please select location, vehicle type, and dates before booking.', 'danger')
+        flash('Please select a location, vehicle type, and dates before booking.', 'danger')
         return redirect(url_for('view_cars'))
 
     if request.method == 'POST':
@@ -529,11 +552,11 @@ def book_car(car_id):
                 flash('End date must be after start date', 'danger')
                 return render_template('book-car.html', car=car, today=today, max_date=max_date, search_params=search_params)
             if start_date > max_date or end_date > max_date:
-                flash('Dates must be within 1 month from today.', 'danger')
+                flash('Dates must be more than 1 month from today.', 'danger')
                 return render_template('book-car.html', car=car, today=today, max_date=max_date, search_params=search_params)
 
             start_dt = datetime.combine(start_date, datetime.min.time())
-            end_dt = datetime.combine(end_date, datetime.min.time())
+            end_dt = datetime.combine(end_date, datetime.max.time())
 
             conflict = bookings_collection.find_one({
                 'vehicle_id': ObjectId(car_id),
@@ -559,7 +582,7 @@ def book_car(car_id):
                 'total_price': total_price,
                 'showroom': showroom
             }
-            logger.info(f"Booking data stored in session for vehicle: {car_id}")
+            logger.info(f"Booking data stored in session for car_id: {car_id}")
             return redirect(url_for('payment', car_id=car_id))
 
         except ValueError as e:
@@ -598,13 +621,13 @@ def payment(car_id):
                 'payment_capture': 1
             }
             order = razorpay_client.order.create(data=order_data)
-            logger.info(f"Razorpay order created: {order['id']} for vehicle: {car_id}")
+            logger.info(f"Razorpay order created: ID {order['id']} for car_id: {car_id}")
             return render_template('payment.html',
                                   car=car,
                                   booking_data=booking_data,
                                   order_id=order['id'],
                                   razorpay_key_id=RAZORPAY_KEY_ID,
-                                  user={'email': session.get('username', 'Unknown')})
+                                  user={'name': session.get('username', 'Unknown')})
         except Exception as e:
             logger.error(f"Error creating Razorpay order: {str(e)}")
             flash('An error occurred while initiating payment.', 'danger')
@@ -633,7 +656,7 @@ def verify_payment():
         booking_data = session.get('booking_data')
         logger.debug(f"Session booking_data: {booking_data}")
         if not booking_data or booking_data['vehicle_id'] != car_id:
-            logger.warning(f"Invalid booking data for vehicle: {car_id}")
+            logger.warning(f"Invalid booking data for car_id: {car_id}")
             return jsonify({'status': 'error', 'message': 'Invalid booking data'}), 400
 
         start_date = datetime.strptime(booking_data['start_date'], '%Y-%m-%d').date()
@@ -643,7 +666,7 @@ def verify_payment():
         logger.debug(f"Vehicle lookup result: {vehicle}")
         if not vehicle:
             logger.warning(f"Vehicle not found for car_id: {car_id}")
-            return jsonify({'status': 'error', 'message': 'Vehicle not found'}), 400
+            return jsonify({'status': 'error', 'message': 'Vehicle not found'}), 404
 
         showroom = booking_data.get('showroom', booking_data['location'])
 
@@ -651,7 +674,7 @@ def verify_payment():
             'vehicle_id': ObjectId(car_id),
             'firebase_uid': session['firebase_uid'],
             'start_date': datetime.combine(start_date, datetime.min.time()),
-            'end_date': datetime.combine(end_date, datetime.min.time()),
+            'end_date': datetime.combine(end_date, datetime.max.time()),
             'location': booking_data['location'],
             'location_address': booking_data['location_address'],
             'mobile': booking_data['mobile'],
@@ -666,11 +689,11 @@ def verify_payment():
         logger.debug(f"Booking saved with ID: {booking_id}")
 
         create_notification(
-            firebase_uid=session['firebase_uid'],
+            user_id=session['firebase_uid'],
             action='booking',
-            message=f"You booked {vehicle['car_name']} from {start_date.strftime('%d-%m-%Y')} to {end_date.strftime('%d-%m-%Y')} at {showroom} on {datetime.now(IST).strftime('%d-%m-%Y at %H:%M:%S')}.",
+            message=f"You booked {vehicle['name']} from {start_date.strftime('%d-%m-%Y')} to {end_date.strftime('%d-%m-%Y')} at {showroom} on {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}.",
             additional_data={
-                'car_name': vehicle['car_name'],
+                'vehicle_name': vehicle['name'],
                 'start_date': booking_data['start_date'],
                 'end_date': booking_data['end_date'],
                 'showroom': showroom,
@@ -682,17 +705,18 @@ def verify_payment():
         session.pop('booking_data', None)
         session.pop('search_params', None)
 
-        logger.info(f"Booking confirmed for vehicle: {car_id} by Firebase UID: {session['firebase_uid']}")
-        flash(f"Vehicle {vehicle['car_name']} booked successfully!", 'success')
+        logger.info(f"Booking confirmed successfully for car_id: {car_id} by user {session['firebase_uid']}")
+        flash(f"Booking for {vehicle['name']} confirmed successfully!", 'success')
         return jsonify({'status': 'success', 'redirect': url_for('view_cars')})
-    except razorpay.errors.SignatureVerificationError as e:
+
+    except razorpay.error.SignatureVerificationError as e:
         logger.error(f"Payment signature verification failed: {str(e)}")
         flash('Payment verification failed', 'danger')
-        return jsonify({'status': 'error', 'message': 'Payment verification failed'}), 400
+        return jsonify({'status': 'error', 'message': 'Invalid payment signature'}), 400
     except Exception as e:
         logger.error(f"Error verifying payment: {str(e)}")
         flash('An error occurred during payment verification', 'danger')
-        return jsonify({'status': 'error', 'message': 'An error occurred during payment verification'}), 500
+        return jsonify({'status': 'error', 'message': 'Payment verification error'}), 500
 
 # Cancel booking
 @app.route('/cancel_booking/<booking_id>', methods=['GET', 'POST'])
@@ -718,10 +742,10 @@ def cancel_booking(booking_id):
                 {'$set': {'status': 'cancelled', 'updated_at': datetime.utcnow()}}
             )
             create_notification(
-                firebase_uid=session['firebase_uid'],
+                user_id=session['firebase_uid'],
                 action='booking_cancelled',
-                message=f"You cancelled your booking for {vehicle['car_name']} on {datetime.now(IST).strftime('%d-%m-%Y at %H:%M:%S')}.",
-                additional_data={'car_name': vehicle['car_name'], 'booking_id': str(booking_id)}
+                message=f"You cancelled your booking for {vehicle['name']} on {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}",
+                additional_data={'vehicle_name': vehicle['name'], 'booking_id': str(booking_id)}
             )
             flash('Booking cancelled successfully', 'success')
             return redirect(url_for('booking_history'))
@@ -739,11 +763,11 @@ def get_image(car_id):
         car = cars_collection.find_one({'_id': ObjectId(car_id)})
         if car and 'image_data' in car:
             return app.response_class(car['image_data'], mimetype='image/jpeg')
-        logger.warning(f"No image found for vehicle: {car_id}")
-        return 'No image found', 404
+        logger.warning(f"No image found for car_id: {car_id}")
+        return 'Image not found', 404
     except Exception as e:
         logger.error(f"Error fetching image: {str(e)}")
-        return 'Error fetching image', 500
+        return 'Error retrieving image', 500
 
 # Static pages
 @app.route('/about')
@@ -772,4 +796,4 @@ def page_not_found(e):
         return '<h1>404 - Page Not Found</h1><p>The requested page does not exist.</p>', 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
