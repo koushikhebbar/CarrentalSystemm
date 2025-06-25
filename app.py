@@ -37,13 +37,31 @@ if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 # Initialize Firebase Admin SDK
-FIREBASE_CREDENTIALS_PATH = os.getenv('FIREBASE_CREDENTIALS_PATH')
-if not FIREBASE_CREDENTIALS_PATH or not os.path.exists(FIREBASE_CREDENTIALS_PATH):
-    raise ValueError(f"FIREBASE_CREDENTIALS_PATH is not set or file does not exist: {FIREBASE_CREDENTIALS_PATH}")
+firebase_credentials = {
+    "type": os.getenv("FIREBASE_TYPE"),
+    "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+    "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace("\\n", "\n") if os.getenv("FIREBASE_PRIVATE_KEY") else None,
+    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+    "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+    "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
+    "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_X509_CERT_URL"),
+    "client_x509_cert_url": os.getenv("FIREBASE_CLIENT_X509_CERT_URL"),
+    "universe_domain": os.getenv("FIREBASE_UNIVERSE_DOMAIN")
+}
 
-firebase_cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-firebase_admin.initialize_app(firebase_cred)
-logger.info("Firebase Admin SDK initialized successfully")
+# Validate Firebase credentials
+if not all(firebase_credentials.values()):
+    raise ValueError("One or more Firebase credentials are missing in the .env file")
+
+try:
+    firebase_cred = credentials.Certificate(firebase_credentials)
+    firebase_admin.initialize_app(firebase_cred)
+    logger.info("Firebase Admin SDK initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize Firebase Admin SDK: {str(e)}")
+    raise
 
 # Connect to MongoDB
 MONGO_URI = os.getenv('MONGO_URI')
@@ -277,7 +295,7 @@ def register():
             if not re.match(r'^[a-zA-Z0-9_]{3,20}$', username):
                 return jsonify({"status": "error", "message": "Username must be 3–20 characters and contain only letters, numbers, or underscores"}), 400
             
-            if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
+            if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]', email):
                 return jsonify({"status": "error", "message": "Invalid email format"}), 400
             
             if not re.match(r'^\d{10}$', mobile):
@@ -552,7 +570,7 @@ def book_car(car_id):
                 flash('End date must be after start date', 'danger')
                 return render_template('book-car.html', car=car, today=today, max_date=max_date, search_params=search_params)
             if start_date > max_date or end_date > max_date:
-                flash('Dates must be more than 1 month from today.', 'danger')
+                flash('Dates must be within 1 month from today.', 'danger')
                 return render_template('book-car.html', car=car, today=today, max_date=max_date, search_params=search_params)
 
             start_dt = datetime.combine(start_date, datetime.min.time())
@@ -660,7 +678,7 @@ def verify_payment():
             return jsonify({'status': 'error', 'message': 'Invalid booking data'}), 400
 
         start_date = datetime.strptime(booking_data['start_date'], '%Y-%m-%d').date()
-        end_date = datetime.strptime(booking_data['end_date'], '%Y-%m-%d').date()
+        endmediator = datetime.strptime(booking_data['end_date'], '%Y-%m-%d').date()
 
         vehicle = cars_collection.find_one({'_id': ObjectId(car_id)})
         logger.debug(f"Vehicle lookup result: {vehicle}")
@@ -689,9 +707,9 @@ def verify_payment():
         logger.debug(f"Booking saved with ID: {booking_id}")
 
         create_notification(
-            user_id=session['firebase_uid'],
+            firebase_uid=session['firebase_uid'],
             action='booking',
-            message=f"You booked {vehicle['name']} from {start_date.strftime('%d-%m-%Y')} to {end_date.strftime('%d-%m-%Y')} at {showroom} on {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}.",
+            message=f"You booked {vehicle['name']} from {start_date.strftime('%d-%m-%Y')} to {end_date.strftime('%d-%m-%Y')} at {showroom} on {datetime.now(IST).strftime('%d-%m-%Y %H:%M:%S')}.",
             additional_data={
                 'vehicle_name': vehicle['name'],
                 'start_date': booking_data['start_date'],
@@ -709,7 +727,7 @@ def verify_payment():
         flash(f"Booking for {vehicle['name']} confirmed successfully!", 'success')
         return jsonify({'status': 'success', 'redirect': url_for('view_cars')})
 
-    except razorpay.error.SignatureVerificationError as e:
+    except razorpay.errors.SignatureVerificationError as e:
         logger.error(f"Payment signature verification failed: {str(e)}")
         flash('Payment verification failed', 'danger')
         return jsonify({'status': 'error', 'message': 'Invalid payment signature'}), 400
@@ -742,9 +760,9 @@ def cancel_booking(booking_id):
                 {'$set': {'status': 'cancelled', 'updated_at': datetime.utcnow()}}
             )
             create_notification(
-                user_id=session['firebase_uid'],
+                firebase_uid=session['firebase_uid'],
                 action='booking_cancelled',
-                message=f"You cancelled your booking for {vehicle['name']} on {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}",
+                message=f"You cancelled your booking for {vehicle['name']} on {datetime.now(IST).strftime('%d-%m-%Y %H:%M:%S')}",
                 additional_data={'vehicle_name': vehicle['name'], 'booking_id': str(booking_id)}
             )
             flash('Booking cancelled successfully', 'success')
