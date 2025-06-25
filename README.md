@@ -58,3 +58,38 @@ Python Libraries:
 ```bash
 git clone https://github.com/your-username/rentigoooo.git
 cd rentigoooo
+
+## 🔒 Security Notice
+
+- Ensure your `.env` file is **not committed**.
+- Use `.gitignore` to secure sensitive data.
+- Contact the admin for database credentials or private keys.
+
+---
+
+## 📁 Admin Side
+
+This repo only contains the **User Side**. For the **Admin Dashboard** (add/edit vehicles, manage users), contact:
+
+📧 [designerkoushik256@gmail.com](mailto:designerkoushik256@gmail.com)
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+## 👋 Connect With Me
+
+| 🌐 Portfolio | 📸 Instagram | 🎨 Behance | 💼 LinkedIn | 📬 Email |
+|-------------|--------------|------------|-------------|-----------|
+| [Click Here](https://big-members-388769.framer.app/) | [@koushik.psd](https://instagram.com/koushik.psd) | [@koushikhebbar1](https://behance.net/koushikhebbar1) | [Connect](https://linkedin.com/in/koushik-hebbar-798605293) | [Email](mailto:designerkoushik256@gmail.com) |
+
+---
+
+<p align="center">
+  <em>“Build for real people, solve real problems.”</em>
+</p>
+
